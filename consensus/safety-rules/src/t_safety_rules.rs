@@ -3,8 +3,7 @@
 
 use crate::{ConsensusState, Error};
 use consensus_types::{
-    block::Block, block_data::BlockData, timeout::Timeout, vote::Vote,
-    vote_proposal::MaybeSignedVoteProposal,
+    block_data::BlockData, timeout::Timeout, vote::Vote, vote_proposal::MaybeSignedVoteProposal,
 };
 use diem_crypto::ed25519::Ed25519Signature;
 use diem_types::epoch_change::EpochChangeProof;
@@ -29,7 +28,7 @@ pub trait TSafetyRules {
 
     /// As the holder of the private key, SafetyRules also signs proposals or blocks.
     /// A Block is a signed BlockData along with some additional metadata.
-    fn sign_proposal(&mut self, block_data: BlockData) -> Result<Block, Error>;
+    fn sign_proposal(&mut self, block_data: &BlockData) -> Result<Ed25519Signature, Error>;
 
     /// As the holder of the private key, SafetyRules also signs what is effectively a
     /// timeout message. This returns the signature for that timeout message.

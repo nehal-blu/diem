@@ -3,8 +3,7 @@
 
 use crate::{counters, logging::LogEntry, ConsensusState, Error, SafetyRules, TSafetyRules};
 use consensus_types::{
-    block::Block, block_data::BlockData, timeout::Timeout, vote::Vote,
-    vote_proposal::MaybeSignedVoteProposal,
+    block_data::BlockData, timeout::Timeout, vote::Vote, vote_proposal::MaybeSignedVoteProposal,
 };
 use diem_crypto::ed25519::Ed25519Signature;
 use diem_infallible::RwLock;
@@ -40,7 +39,7 @@ impl SerializerService {
                 bcs::to_bytes(&self.internal.construct_and_sign_vote(&vote_proposal))
             }
             SafetyRulesInput::SignProposal(block_data) => {
-                bcs::to_bytes(&self.internal.sign_proposal(*block_data))
+                bcs::to_bytes(&self.internal.sign_proposal(&block_data))
             }
             SafetyRulesInput::SignTimeout(timeout) => {
                 bcs::to_bytes(&self.internal.sign_timeout(&timeout))
@@ -94,9 +93,10 @@ impl TSafetyRules for SerializerClient {
         bcs::from_bytes(&response)?
     }
 
-    fn sign_proposal(&mut self, block_data: BlockData) -> Result<Block, Error> {
+    fn sign_proposal(&mut self, block_data: &BlockData) -> Result<Ed25519Signature, Error> {
         let _timer = counters::start_timer("external", LogEntry::SignProposal.as_str());
-        let response = self.request(SafetyRulesInput::SignProposal(Box::new(block_data)))?;
+        let response =
+            self.request(SafetyRulesInput::SignProposal(Box::new(block_data.clone())))?;
         bcs::from_bytes(&response)?
     }
 

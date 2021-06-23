@@ -3,8 +3,7 @@
 
 use crate::{ConsensusState, Error, SafetyRules, TSafetyRules};
 use consensus_types::{
-    block::Block, block_data::BlockData, timeout::Timeout, vote::Vote,
-    vote_proposal::MaybeSignedVoteProposal,
+    block_data::BlockData, timeout::Timeout, vote::Vote, vote_proposal::MaybeSignedVoteProposal,
 };
 use diem_crypto::ed25519::Ed25519Signature;
 use diem_infallible::RwLock;
@@ -40,7 +39,7 @@ impl TSafetyRules for LocalClient {
         self.internal.write().construct_and_sign_vote(vote_proposal)
     }
 
-    fn sign_proposal(&mut self, block_data: BlockData) -> Result<Block, Error> {
+    fn sign_proposal(&mut self, block_data: &BlockData) -> Result<Ed25519Signature, Error> {
         self.internal.write().sign_proposal(block_data)
     }
 
